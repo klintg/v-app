@@ -56,7 +56,20 @@
 
 	var _reactRouter = __webpack_require__(159);
 
+	var _home = __webpack_require__(216);
+
+	var _home2 = _interopRequireDefault(_home);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/*
+	ReactDOM.render(
+	  <Router history={history}>
+	    <Route path='/' components={Home}/>
+	  </Router>
+	)
+	*/
+	_reactDom2.default.render(_react2.default.createElement(_home2.default, null), document.getElementById("react-app"));
 
 /***/ },
 /* 1 */
@@ -24683,6 +24696,196 @@
 
 	exports['default'] = _createRouterHistory2['default'](_historyLibCreateHashHistory2['default']);
 	module.exports = exports['default'];
+
+/***/ },
+/* 216 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _footer = __webpack_require__(217);
+
+	var _footer2 = _interopRequireDefault(_footer);
+
+	var _header = __webpack_require__(218);
+
+	var _header2 = _interopRequireDefault(_header);
+
+	var _voting = __webpack_require__(219);
+
+	var _voting2 = _interopRequireDefault(_voting);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Home = _react2.default.createClass({
+	  displayName: 'Home',
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(_header2.default, null),
+	      _react2.default.createElement(
+	        'h1',
+	        null,
+	        ' this is the home page'
+	      ),
+	      _react2.default.createElement(_voting2.default, null),
+	      _react2.default.createElement(_footer2.default, null)
+	    );
+	  }
+	});
+	exports.default = Home;
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Footer = _react2.default.createClass({
+	  displayName: 'Footer',
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'footer',
+	      null,
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'copyright klint '
+	      )
+	    );
+	  }
+	});
+	exports.default = Footer;
+
+/***/ },
+/* 218 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(159);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Header = _react2.default.createClass({
+	  displayName: 'Header',
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'nav',
+	      { className: 'navbar navbar-default' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'container-fluid' },
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'nav navbar-nav' },
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '' },
+	              'Home'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '' },
+	              'Sign Up'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            _react2.default.createElement(
+	              _reactRouter.Link,
+	              { to: '' },
+	              'Login'
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	exports.default = Header;
+
+/***/ },
+/* 219 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	//import chart from 'chart.js';
+	//import {BarChart} from 'react-d3';
+
+	var Voting = _react2.default.createClass({
+	  displayName: 'Voting',
+
+	  /*  barData() {
+	      {
+	      "name":"Series A",
+	      "values":[{"x":1, 'y':91}]
+	    },
+	    {
+	      "name":"Series B",
+	      "values":[{"x":2, 'y':120}]
+	    }
+	  
+	  },*/
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'visualization'
+	      )
+	    );
+	  }
+	});
+	exports.default = Voting;
 
 /***/ }
 /******/ ]);
