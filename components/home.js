@@ -1,14 +1,18 @@
 import React from 'react';
 import Footer from './footer.js'
-import Header from './header.js'
-import Voting from './voting'
+
+//import Voting from './voting'
+import Exp from './exp.js'
+
+
 var Home = React.createClass({
   render() {
     return (
       <div>
-        <Header/>
+
         <h1> this is the home page</h1>
-        <Voting/>
+
+        <Exp/>
         <Footer/>
       </div>
     )

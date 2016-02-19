@@ -1,7 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, IndexRoute, history} from 'react-router';
+import {Router, Route, IndexRoute, useRouterHistory} from 'react-router';
+import { createHashHistory} from 'history'
+import App from './components/app';
 import Home from './components/home'
+import Audience from './components/audience';
+import Board from './components/board'
+import Speaker from './components/speaker'
+
 /*
 ReactDOM.render(
   <Router history={history}>
@@ -9,4 +15,14 @@ ReactDOM.render(
   </Router>
 )
 */
-ReactDOM.render(<Home/>, document.getElementById("react-app"))
+const appHistory = useRouterHistory(createHashHistory)({ queryKey: false })
+ReactDOM.render((
+  <Router history={appHistory}>
+    <Route  path='/'component={App}>
+      <IndexRoute component={Home} />
+      <Route path='audience' component={Audience} />
+      <Route path='board' component={Board} />
+      <Route path='speaker' component={Speaker} />
+    </Route>
+  </Router>
+), document.getElementById("react-app"))
