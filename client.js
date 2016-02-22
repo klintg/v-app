@@ -7,6 +7,8 @@ import Home from './components/home'
 import Audience from './components/audience';
 import Board from './components/board'
 import Speaker from './components/speaker'
+import Notfound from './components/notfound';
+
 
 /*
 ReactDOM.render(
@@ -23,6 +25,7 @@ ReactDOM.render((
       <Route path='audience' component={Audience} />
       <Route path='board' component={Board} />
       <Route path='speaker' component={Speaker} />
+      <Route path='*' component={Notfound}/>
     </Route>
   </Router>
 ), document.getElementById("react-app"))

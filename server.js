@@ -20,6 +20,10 @@ io.sockets.on('connection', function(socket) {
     console.log('Disconnected: %s sockets remaining.', connections.length)
   });
 
+  socket.on('join', function(payload) {
+    console.log('audience joined %s', payload.name)
+  });
+
   socket.emit('welcome', { title: title})
 
   connections.push(socket);
