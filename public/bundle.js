@@ -25000,8 +25000,8 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      status: 'disconnected',
-	      title: '',
-	      emit: ''
+	      title: ''
+
 	    };
 	  },
 	  componentWillMount: function componentWillMount() {
@@ -25012,7 +25012,7 @@
 	    this.socket.on('welcome', this.welcome);
 	  },
 	  emit: function emit(eventName, payload) {
-	    this.socket.emit();
+	    this.socket.emit(eventName, payload);
 	  },
 	  connect: function connect() {
 	    this.setState({ status: 'connected' });
@@ -25023,12 +25023,22 @@
 	  welcome: function welcome(serverState) {
 	    this.setState({ title: serverState.title });
 	  },
+
+	  /*
+	  renderChild () {
+	    React.cloneElement(this.props.children, {
+	      emit: this.emit,
+	      title: this.state.title,
+	      status: this.state.status
+	    })},
+	    */
+
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
 	      null,
 	      _react2.default.createElement(_header2.default, { title: this.state.title, status: this.state.status }),
-	      _react2.default.cloneElement(this.props.children, { title: this.state.title, status: this.state.status, emit: this.state.emit })
+	      _react2.default.cloneElement(this.props.children, { title: this.state.title, status: this.state.status, emit: this.emit })
 	    );
 	  }
 	});

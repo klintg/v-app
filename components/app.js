@@ -10,7 +10,7 @@ var App = React.createClass({
     return{
       status: 'disconnected',
       title: '',
-      emit: ''
+
     }
   },
   componentWillMount() {       //after the components have mounted they should connnect to the port 9000
@@ -21,7 +21,7 @@ var App = React.createClass({
   },
 
   emit(eventName, payload) {
-    this.socket.emit()
+    this.socket.emit(eventName, payload)
   },
 
   connect() {
@@ -33,11 +33,20 @@ var App = React.createClass({
   welcome(serverState) {
     this.setState({title: serverState.title})
   },
+  /*
+  renderChild () {
+    React.cloneElement(this.props.children, {
+      emit: this.emit,
+      title: this.state.title,
+      status: this.state.status
+    })},
+    */
+
   render() {
     return (
       <div>
         <Header title={this.state.title} status={this.state.status} />
-        {React.cloneElement(this.props.children, {title: this.state.title, status:this.state.status})}
+        {React.cloneElement(this.props.children, {title:this.state.title, status:this.state.status, emit:this.emit})}
 
       </div>
     )
