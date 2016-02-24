@@ -78,7 +78,7 @@
 
 	var _speaker2 = _interopRequireDefault(_speaker);
 
-	var _notfound = __webpack_require__(278);
+	var _notfound = __webpack_require__(279);
 
 	var _notfound2 = _interopRequireDefault(_notfound);
 
@@ -25000,7 +25000,10 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      status: 'disconnected',
-	      title: ''
+	      title: '',
+	      member: {},
+	      audience: [],
+	      speaker: ''
 
 	    };
 	  },
@@ -25009,19 +25012,48 @@
 	    this.socket = (0, _socket2.default)('http://localhost:9000');
 	    this.socket.on('connect', this.connect);
 	    this.socket.on('disconnect', this.disconnect);
-	    this.socket.on('welcome', this.welcome);
+	    this.socket.on('welcome', this.updateState);
+	    this.socket.on('joined', this.joined);
+	    this.socket.on('audience', this.updateAudience);
+	    this.socket.on('start', this.start);
+	    this.socket.on('end', this.updateState);
 	  },
 	  emit: function emit(eventName, payload) {
 	    this.socket.emit(eventName, payload);
 	  },
 	  connect: function connect() {
+	    var member = sessionStorage.member ? JSON.parse(sessionStorage.member) : null; //this checks whether ther is a member in session storage and parse it otherwise it does nothing Null.
+
+	    if (member && member.type === 'audience') {
+	      this.emit('join', member);
+	    } else if (member && member.type === 'speaker') {
+	      this.emit('start', { name: member.name, title: sessionStorage.title });
+	    }
+
 	    this.setState({ status: 'connected' });
 	  },
 	  disconnect: function disconnect() {
-	    this.setState({ status: 'disconnected' });
+	    this.setState({
+	      status: 'disconnected',
+	      title: 'disconnected',
+	      speaker: ''
+	    });
 	  },
-	  welcome: function welcome(serverState) {
-	    this.setState({ title: serverState.title });
+	  updateState: function updateState(serverState) {
+	    this.setState(serverState);
+	  },
+	  joined: function joined(member) {
+	    sessionStorage.member = JSON.stringify(member); //we access the browsers sessionStorage and add a member node. the JSON.stringify turns the member into a json string.
+	    this.setState({ member: member });
+	  },
+	  updateAudience: function updateAudience(newAudience) {
+	    this.setState({ audience: newAudience });
+	  },
+	  start: function start(presentation) {
+	    if (this.state.member.type === 'speaker') {
+	      sessionStorage.title = presentation.title;
+	    }
+	    this.setState(presentation);
 	  },
 
 	  /*
@@ -25037,8 +25069,8 @@
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      _react2.default.createElement(_header2.default, { title: this.state.title, status: this.state.status }),
-	      _react2.default.cloneElement(this.props.children, { title: this.state.title, status: this.state.status, emit: this.emit })
+	      _react2.default.createElement(_header2.default, { title: this.state.title, status: this.state.status, speaker: this.state.speaker }),
+	      _react2.default.cloneElement(this.props.children, { audience: this.state.audience, title: this.state.title, status: this.state.status, member: this.state.member, emit: this.emit })
 	    );
 	  }
 	});
@@ -32549,6 +32581,11 @@
 	              'h1',
 	              null,
 	              this.props.title
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              this.props.speaker
 	            )
 	          ),
 	          _react2.default.createElement(
@@ -34021,11 +34058,36 @@
 	        _display2.default,
 	        { 'if': this.props.status === 'connected' },
 	        _react2.default.createElement(
-	          'h2',
-	          null,
-	          ' Join the session'
+	          _display2.default,
+	          { 'if': this.props.member.name },
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            'Welcome ',
+	            this.props.member.name
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            this.props.audience.length,
+	            ' audience member connected'
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Questions will appear here'
+	          )
 	        ),
-	        _react2.default.createElement(_join2.default, { emit: this.props.emit })
+	        _react2.default.createElement(
+	          _display2.default,
+	          { 'if': !this.props.member.name },
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            ' Join the session'
+	          ),
+	          _react2.default.createElement(_join2.default, { emit: this.props.emit })
+	        )
 	      )
 	    );
 	  }
@@ -34070,6 +34132,8 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
+	var _reactRouter = __webpack_require__(159);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Join = _react2.default.createClass({
@@ -34092,6 +34156,11 @@
 	        'button',
 	        { className: 'btn btn-primary' },
 	        'Join'
+	      ),
+	      _react2.default.createElement(
+	        _reactRouter.Link,
+	        { to: '/speaker' },
+	        'Start Presentation '
 	      )
 	    );
 	  }
@@ -34144,15 +34213,50 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _display = __webpack_require__(274);
+
+	var _display2 = _interopRequireDefault(_display);
+
+	var _joinspeaker = __webpack_require__(278);
+
+	var _joinspeaker2 = _interopRequireDefault(_joinspeaker);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Speaker = _react2.default.createClass({
 	  displayName: 'Speaker',
 	  render: function render() {
 	    return _react2.default.createElement(
-	      'h1',
+	      'div',
 	      null,
-	      'the speaker'
+	      _react2.default.createElement(
+	        _display2.default,
+	        { 'if': this.props.status === 'connected' },
+	        _react2.default.createElement(
+	          _display2.default,
+	          { 'if': this.props.member.name && this.props.member.type === 'speaker' },
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Questions'
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Attendance'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          _display2.default,
+	          { 'if': !this.props.member.name },
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            'Start the presentation'
+	          ),
+	          _react2.default.createElement(_joinspeaker2.default, { emit: this.props.emit })
+	        )
+	      )
 	    );
 	  }
 	});
@@ -34160,6 +34264,55 @@
 
 /***/ },
 /* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var JoinSpeaker = _react2.default.createClass({
+	  displayName: 'JoinSpeaker',
+	  start: function start() {
+	    var speakerName = _reactDom2.default.findDOMNode(this.refs.name).value;
+	    var title = _reactDom2.default.findDOMNode(this.refs.title).value;
+	    this.props.emit('start', { name: speakerName, title: title });
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'form',
+	      { action: 'javascript:void(0)', onSubmit: this.start },
+	      _react2.default.createElement(
+	        'label',
+	        null,
+	        ' Full Name '
+	      ),
+	      _react2.default.createElement('input', { ref: 'name', className: 'form-control', placeholder: 'enter your full name..', required: true }),
+	      _react2.default.createElement(
+	        'label',
+	        null,
+	        ' Presentation Title '
+	      ),
+	      _react2.default.createElement('input', { ref: 'title', className: 'form-control', placeholder: 'enter title..', required: true }),
+	      _react2.default.createElement(
+	        'button',
+	        { className: 'btn btn-primary' },
+	        'Join'
+	      )
+	    );
+	  }
+	});
+	module.exports = JoinSpeaker;
+
+/***/ },
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

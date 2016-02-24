@@ -1,9 +1,10 @@
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDOM from 'react-dom';
+import{Link} from 'react-router';
 
 var Join = React.createClass({
   join() {
-    var memberName = ReactDom.findDOMNode(this.refs.name).value;
+    var memberName = ReactDOM.findDOMNode(this.refs.name).value;
     this.props.emit('join', {name: memberName});
   },
   render() {
@@ -14,6 +15,7 @@ var Join = React.createClass({
 
         <button className = "btn btn-primary">Join</button>
 
+        <Link to='/speaker'>Start Presentation </Link>
       </form>
     )
   }
