@@ -70,15 +70,15 @@
 
 	var _audience2 = _interopRequireDefault(_audience);
 
-	var _board = __webpack_require__(276);
+	var _board = __webpack_require__(277);
 
 	var _board2 = _interopRequireDefault(_board);
 
-	var _speaker = __webpack_require__(277);
+	var _speaker = __webpack_require__(278);
 
 	var _speaker2 = _interopRequireDefault(_speaker);
 
-	var _notfound = __webpack_require__(279);
+	var _notfound = __webpack_require__(282);
 
 	var _notfound2 = _interopRequireDefault(_notfound);
 
@@ -25003,8 +25003,9 @@
 	      title: '',
 	      member: {},
 	      audience: [],
-	      speaker: ''
-
+	      speaker: '',
+	      questions: [],
+	      currentQuestion: false
 	    };
 	  },
 	  componentWillMount: function componentWillMount() {
@@ -25017,6 +25018,7 @@
 	    this.socket.on('audience', this.updateAudience);
 	    this.socket.on('start', this.start);
 	    this.socket.on('end', this.updateState);
+	    this.socket.on('ask', this.ask);
 	  },
 	  emit: function emit(eventName, payload) {
 	    this.socket.emit(eventName, payload);
@@ -25055,6 +25057,9 @@
 	    }
 	    this.setState(presentation);
 	  },
+	  ask: function ask(question) {
+	    sessionStorage.answer = '', this.setState({ currentQuestion: question });
+	  },
 
 	  /*
 	  renderChild () {
@@ -25070,7 +25075,7 @@
 	      'div',
 	      null,
 	      _react2.default.createElement(_header2.default, { title: this.state.title, status: this.state.status, speaker: this.state.speaker }),
-	      _react2.default.cloneElement(this.props.children, { audience: this.state.audience, title: this.state.title, status: this.state.status, member: this.state.member, emit: this.emit })
+	      _react2.default.cloneElement(this.props.children, { currentQuestion: this.state.currentQuestion, questions: this.state.questions, audience: this.state.audience, title: this.state.title, status: this.state.status, member: this.state.member, emit: this.emit })
 	    );
 	  }
 	});
@@ -34046,6 +34051,10 @@
 
 	var _join2 = _interopRequireDefault(_join);
 
+	var _ask = __webpack_require__(276);
+
+	var _ask2 = _interopRequireDefault(_ask);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Audience = _react2.default.createClass({
@@ -34061,21 +34070,30 @@
 	          _display2.default,
 	          { 'if': this.props.member.name },
 	          _react2.default.createElement(
-	            'h2',
-	            null,
-	            'Welcome ',
-	            this.props.member.name
+	            _display2.default,
+	            { 'if': !this.props.currentQuestion },
+	            _react2.default.createElement(
+	              'h2',
+	              null,
+	              'Welcome ',
+	              this.props.member.name
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              this.props.audience.length,
+	              ' audience member connected'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              null,
+	              'Questions will appear here'
+	            )
 	          ),
 	          _react2.default.createElement(
-	            'p',
-	            null,
-	            this.props.audience.length,
-	            ' audience member connected'
-	          ),
-	          _react2.default.createElement(
-	            'p',
-	            null,
-	            'Questions will appear here'
+	            _display2.default,
+	            { 'if': this.props.currentQuestion },
+	            _react2.default.createElement(_ask2.default, { question: this.props.currentQuestion, emit: this.props.emit })
 	          )
 	        ),
 	        _react2.default.createElement(
@@ -34176,6 +34194,102 @@
 
 	'use strict';
 
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _display = __webpack_require__(274);
+
+	var _display2 = _interopRequireDefault(_display);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Ask = _react2.default.createClass({
+	  displayName: 'Ask',
+	  getInitialState: function getInitialState() {
+	    return {
+	      choices: [],
+	      answer: undefined
+	    };
+	  },
+	  componentWillMount: function componentWillMount() {
+	    this.setUpChoices();
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps() {
+	    this.setUpChoices();
+	  },
+	  setUpChoices: function setUpChoices() {
+	    var choices = Object.keys(this.props.question);
+	    choices.shift();
+	    this.setState({
+	      choices: choices,
+	      answer: sessionStorage.answer
+	    });
+	  },
+	  select: function select(choice) {
+	    this.setState({ answer: choice });
+	    sessionStorage.answer = choice;
+	    this.props.emit('answer', {
+	      question: this.props.question,
+	      choice: choice
+	    });
+	  },
+	  addChoiceButton: function addChoiceButton(choice, i) {
+	    var buttonTypes = ['primary', 'success', 'warning', 'danger'];
+	    return _react2.default.createElement(
+	      'button',
+	      { key: i,
+	        className: "col-xs-12 col-sm-6 btn btn-" + buttonTypes[i],
+	        onClick: this.select.bind(null, choice) },
+	      choice,
+	      ' : ',
+	      this.props.question[choice]
+	    );
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { id: 'currentQuestion' },
+	      _react2.default.createElement(
+	        _display2.default,
+	        { 'if': this.state.answer },
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          'You Answered ',
+	          this.state.answer
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          this.props.question[this.state.answer]
+	        )
+	      ),
+	      _react2.default.createElement(
+	        _display2.default,
+	        { 'if': !this.state.answer },
+	        _react2.default.createElement(
+	          'h2',
+	          null,
+	          this.props.question.query
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          this.state.choices.map(this.addChoiceButton)
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = Ask;
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -34200,7 +34314,7 @@
 	exports.default = Board;
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34217,9 +34331,17 @@
 
 	var _display2 = _interopRequireDefault(_display);
 
-	var _joinspeaker = __webpack_require__(278);
+	var _joinspeaker = __webpack_require__(279);
 
 	var _joinspeaker2 = _interopRequireDefault(_joinspeaker);
+
+	var _attendance = __webpack_require__(280);
+
+	var _attendance2 = _interopRequireDefault(_attendance);
+
+	var _questions = __webpack_require__(281);
+
+	var _questions2 = _interopRequireDefault(_questions);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34235,16 +34357,8 @@
 	        _react2.default.createElement(
 	          _display2.default,
 	          { 'if': this.props.member.name && this.props.member.type === 'speaker' },
-	          _react2.default.createElement(
-	            'p',
-	            null,
-	            'Questions'
-	          ),
-	          _react2.default.createElement(
-	            'p',
-	            null,
-	            'Attendance'
-	          )
+	          _react2.default.createElement(_questions2.default, { questions: this.props.questions, emit: this.props.emit }),
+	          _react2.default.createElement(_attendance2.default, { audience: this.props.audience })
 	        ),
 	        _react2.default.createElement(
 	          _display2.default,
@@ -34263,7 +34377,7 @@
 	exports.default = Speaker;
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34312,7 +34426,123 @@
 	module.exports = JoinSpeaker;
 
 /***/ },
-/* 279 */
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Attendance = _react2.default.createClass({
+	  displayName: "Attendance",
+	  addMemberRow: function addMemberRow(member, i) {
+	    return _react2.default.createElement(
+	      "tr",
+	      { key: i },
+	      _react2.default.createElement(
+	        "td",
+	        null,
+	        member.name
+	      ),
+	      _react2.default.createElement(
+	        "td",
+	        null,
+	        member.id
+	      )
+	    );
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "div",
+	      null,
+	      _react2.default.createElement(
+	        "h2",
+	        null,
+	        "Attendance - ",
+	        this.props.audience.length,
+	        " members"
+	      ),
+	      _react2.default.createElement(
+	        "table",
+	        { className: "table table-striped" },
+	        _react2.default.createElement(
+	          "thead",
+	          null,
+	          _react2.default.createElement(
+	            "tr",
+	            null,
+	            _react2.default.createElement(
+	              "th",
+	              null,
+	              "Audience Member"
+	            ),
+	            _react2.default.createElement(
+	              "th",
+	              null,
+	              "Socket ID"
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          "tbody",
+	          null,
+	          this.props.audience.map(this.addMemberRow)
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = Attendance;
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Questions = _react2.default.createClass({
+	  displayName: 'Questions',
+	  ask: function ask(question) {
+	    this.props.emit('ask', question);
+	  },
+	  addQuestion: function addQuestion(question, i) {
+	    return _react2.default.createElement(
+	      'div',
+	      { key: i, className: 'col-xs-12 col-sm-6 col-md-3' },
+	      _react2.default.createElement(
+	        'span',
+	        { onClick: this.ask.bind(null, question) },
+	        question.query
+	      )
+	    );
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { id: 'questions', className: 'row' },
+	      _react2.default.createElement(
+	        'h2',
+	        null,
+	        'Questions'
+	      ),
+	      this.props.questions.map(this.addQuestion)
+	    );
+	  }
+	});
+	module.exports = Questions;
+
+/***/ },
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

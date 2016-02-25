@@ -12,6 +12,15 @@ var connections = [];
 var title = 'Untitled Presentation';
 var audience = [];
 var speaker = {};
+var questions = require('./app-questions');
+var currentQuestion = false;
+var results = {
+  a:0,
+  b:0,
+  c:0,
+  d:0
+}
+
 
 var io = require('socket.io').listen(server);
 //incorporating socket.io
@@ -59,10 +68,25 @@ io.sockets.on('connection', function(socket) {
     console.log("Presentation Started: '%s' by %s", title, speaker.name)
   });
 
+  socket.on('ask', function(question) {
+    currentQuestion = question;
+    results = {a:0, b:0, c:0, d:0};
+    io.sockets.emit('ask', currentQuestion);
+    console.log("Question Asked: '%s'", question.query)
+  });
+
+  socket.on('answer', function(payload) {
+    results[payload.choice]++
+
+    console.log("Answer: '%s' - %j", payload.choice, results);
+  });
+
   socket.emit('welcome', {
     title: title,
     audience: audience,
-    speaker: speaker.name
+    speaker: speaker.name,
+    questions: questions,
+    currentQuestion: currentQuestion
   })
 
   connections.push(socket);
