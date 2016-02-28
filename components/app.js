@@ -14,7 +14,8 @@ var App = React.createClass({
       audience: [],
       speaker: '',
       questions: [],
-      currentQuestion: false
+      currentQuestion: false,
+      results: {}
     }
   },
   componentWillMount() {       //after the components have mounted they should connnect to the port 9000
@@ -27,6 +28,7 @@ var App = React.createClass({
     this.socket.on('start', this.start)
     this.socket.on('end', this.updateState)
     this.socket.on('ask', this.ask)
+    this.socket.on('results', this.updateResults)
   },
 
   emit(eventName, payload) {
@@ -71,6 +73,9 @@ var App = React.createClass({
     sessionStorage.answer = '',
     this.setState({currentQuestion: question })
   },
+  updateResults(data) {
+    this.setState({ results: data })
+  },
   /*
   renderChild () {
     React.cloneElement(this.props.children, {
@@ -84,7 +89,7 @@ var App = React.createClass({
     return (
       <div>
         <Header title={this.state.title} status={this.state.status} speaker={this.state.speaker} />
-        {React.cloneElement(this.props.children, {currentQuestion:this.state.currentQuestion, questions:this.state.questions, audience: this.state.audience, title:this.state.title, status:this.state.status, member:this.state.member, emit:this.emit})}
+        {React.cloneElement(this.props.children, {results:this.state.results, currentQuestion:this.state.currentQuestion, questions:this.state.questions, audience: this.state.audience, title:this.state.title, status:this.state.status, member:this.state.member, emit:this.emit})}
 
       </div>
     )
