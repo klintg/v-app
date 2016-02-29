@@ -1,5 +1,5 @@
-import React from 'react';
-import io from 'socket.io-client';
+import React from 'react'
+import io from 'socket.io-client'
 
 import Header from './header.js'
 import Home from './home';
