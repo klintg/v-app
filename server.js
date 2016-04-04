@@ -7,6 +7,7 @@ app.use(express.static("./public"));
 app.use(express.static("./node_modules/bootstrap/dist"));
 
 var server = app.listen(9000);
+var io = require('socket.io').listen(server);
 
 var connections = [];
 var title = 'Untitled Presentation';
@@ -22,13 +23,14 @@ var results = {
 }
 
 
-var io = require('socket.io').listen(server);
+
 //incorporating socket.io
 io.sockets.on('connection', function(socket) {
 
   socket.once('disconnect', function() {
 
-    var member= _.findWhere(audience, {id:this.id})// this refers to the socket id that has just disconnected
+    var member= _.findWhere(audience, {id:this.id})// this refers to the socket id that has just disconnected because we are in the disconnected  event handler. findWhere is an undescore function that
+                                                    // takes in an array to search, and returns the item based upon the query parameters which in this case is {id:this.id}
     if(member) {
       audience.splice(audience.indexOf(member), 1);
       io.sockets.emit('audience', audience)

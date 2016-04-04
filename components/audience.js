@@ -13,7 +13,7 @@ var Audience = React.createClass({
           <Display if={this.props.member.name}>
             <Display if={!this.props.currentQuestion}>
               <h2>Welcome {this.props.member.name}</h2>
-              <p>{this.props.audience.length} audience member connected</p>
+              <p>{this.props.audience.length} audience member joined</p>
               <p>Questions will appear here</p>
             </Display>
 

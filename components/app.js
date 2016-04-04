@@ -20,7 +20,7 @@ var App = React.createClass({
   },
   componentWillMount() {       //after the components have mounted they should connnect to the port 9000
     this.socket = io('http://localhost:9000')
-    this.socket.on('connect', this.connect)
+    this.socket.on('connect', this.connect) //adding listener for the connect event.
     this.socket.on('disconnect', this.disconnect)
     this.socket.on('welcome', this.updateState)
     this.socket.on('joined', this.joined)
@@ -60,7 +60,7 @@ var App = React.createClass({
     sessionStorage.member = JSON.stringify(member); //we access the browsers sessionStorage and add a member node. the JSON.stringify turns the member into a json string.
     this.setState({member: member});
   },
-  updateAudience(newAudience) {
+  updateAudience(newAudience) {  //updates the audience.
     this.setState({audience: newAudience})
   },
   start(presentation) {

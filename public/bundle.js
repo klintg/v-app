@@ -25004,7 +25004,7 @@
 	  componentWillMount: function componentWillMount() {
 	    //after the components have mounted they should connnect to the port 9000
 	    this.socket = (0, _socket2.default)('http://localhost:9000');
-	    this.socket.on('connect', this.connect);
+	    this.socket.on('connect', this.connect); //adding listener for the connect event.
 	    this.socket.on('disconnect', this.disconnect);
 	    this.socket.on('welcome', this.updateState);
 	    this.socket.on('joined', this.joined);
@@ -25043,6 +25043,7 @@
 	    this.setState({ member: member });
 	  },
 	  updateAudience: function updateAudience(newAudience) {
+	    //updates the audience.
 	    this.setState({ audience: newAudience });
 	  },
 	  start: function start(presentation) {
@@ -32532,45 +32533,6 @@
 	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'nav',
-	        { className: 'navbar navbar-default' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'container-fluid' },
-	          _react2.default.createElement(
-	            'ul',
-	            { className: 'nav navbar-nav' },
-	            _react2.default.createElement(
-	              'li',
-	              null,
-	              _react2.default.createElement(
-	                _reactRouter.Link,
-	                { to: '#' },
-	                'Home'
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'li',
-	              null,
-	              _react2.default.createElement(
-	                _reactRouter.Link,
-	                { to: '#' },
-	                'Sign Up'
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'li',
-	              null,
-	              _react2.default.createElement(
-	                _reactRouter.Link,
-	                { to: '#' },
-	                'Login'
-	              )
-	            )
-	          )
-	        )
-	      ),
-	      _react2.default.createElement(
 	        'header',
 	        null,
 	        _react2.default.createElement(
@@ -32708,6 +32670,12 @@
 	  }
 	});
 	module.exports = Display;
+
+	/*
+	REUSABLE COMPONENTS..
+	since we are using JSX  we cant just write if/else condition statements
+	we write : return (condition) ? "this condition is true" : "this condition is false"
+	*/
 
 /***/ },
 /* 271 */
@@ -32938,6 +32906,12 @@
 	  }
 	});
 	module.exports = Display;
+
+	/*
+	REUSABLE COMPONENTS..
+	since we are using JSX  we cant just write if/else condition statements
+	we write : return (condition) ? "this condition is true" : "this condition is false"
+	*/
 
 /***/ },
 /* 275 */
