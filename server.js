@@ -6,7 +6,8 @@ var app = express();
 app.use(express.static("./public"));
 app.use(express.static("./node_modules/bootstrap/dist"));
 
-var server = app.listen(9000);
+var port = process.env.PORT || 9000
+var server = app.listen(port);
 var io = require('socket.io').listen(server);
 
 var connections = [];
@@ -98,4 +99,4 @@ io.sockets.on('connection', function(socket) {
 });
 
 
-console.log('server running on port 9000');
+console.log('server running on port', port);
