@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "prestart": "webpack",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "klint",
   "license": "MIT",
